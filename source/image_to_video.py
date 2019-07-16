@@ -15,19 +15,30 @@
 import cv2
 import os
 
-fps = 25
-fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-video_writer = cv2.VideoWriter(
-    filename='./result.avi',
-    fourcc=fourcc,
-    fps=fps,
-    frameSize=(
-        640,
-        362))
-for i in range(1, 6000):
-    p = i
-    if os.path.exists('./video/pikachu/' + str(p) + '.png'):  # 判断图片是否存在
-        img = cv2.imread(filename='./video/pikachu/' + str(p) + '.png')
-        video_writer.write(img)
-        print(str(p) + '.png' + ' done!')
-video_writer.release()
+
+def main(filename, fps, frame_size, img_start, img_end):
+    """ The program runs the main function interface.
+
+    Args:
+        filename: Video file name.
+        fps: Set how many images video plays per second..
+        frame_size: Size of frame in video.
+        img_start: The image is transformed into the starting target of the video image.
+        img_end: The image is transformed into the ending target of the video image
+    """
+    fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
+    video_writer = cv2.VideoWriter(filename, fourcc, fps, frame_size)
+
+    for i in range(img_start, img_end):
+        # check img exist
+        if os.path.exists('./video/' + str(i) + '.png'):
+            img = cv2.imread(filename + str(i) + '.png')
+            video_writer.write(img)
+
+            print(str(i) + '.png' + ' completion!')
+
+    video_writer.release()
+
+
+if __name__ == '__main__':
+    main('./result.avi', 25, (640, 362), 0, 6000)
