@@ -21,8 +21,8 @@ def get_video_pic(name):
     cap.set(1, int(cap.get(7) / 2))
     rval, frame = cap.read()
     if rval:
-        cv2.imwrite('pikachu.png', frame)
+        cv2.imwrite('resume.png', frame)
     cap.release()
 
 
-get_video_pic("pikachu.mp4")
+get_video_pic("resume.mp4")
