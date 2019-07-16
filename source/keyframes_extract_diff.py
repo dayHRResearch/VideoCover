@@ -45,7 +45,7 @@ import os
 
 
 # Video path of the source file
-videopath = 'pikachu.mp4'
+videopath = 'resume.mp4'
 # Directory to store the processed frames
 output_dir = './extract_result/'
 # smoothing window size
@@ -176,7 +176,7 @@ def main():
     idx = 0
     while success:
         if idx in keyframe_id_set:
-            name = "keyframe_" + str(idx) + ".jpg"
+            name = "keyframe_" + str(idx) + ".png"
             cv2.imwrite(output_dir + name, frame)
             keyframe_id_set.remove(idx)
         idx = idx + 1
