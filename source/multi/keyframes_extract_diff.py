@@ -45,9 +45,9 @@ import os
 
 
 # Video path of the source file
-videopath = 'resume.mp4'
+videopath = '../example/resume.mp4'
 # Directory to store the processed frames
-output_dir = './extract_result/'
+output_dir = '../example/extract_result/'
 # smoothing window size
 len_window = int(50)
 
@@ -55,7 +55,7 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 
-def smooth(x, window_len=13, window='hanning'):
+def smooth(x, window_len=13, window='blackman'):
     """ smooth the data using a window with requested size.
 
     This method is based on the convolution of a scaled window with the signal.
