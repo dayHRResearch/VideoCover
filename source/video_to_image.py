@@ -15,27 +15,37 @@
 
 import cv2
 import os
-# 要提取视频的文件名，隐藏后缀
-sourceFileName = 'pikachu'
-# 在这里把后缀接上
-video_path = os.path.join("", "", sourceFileName + '.mp4')
-times = 1
-# 提取视频的频率，每25帧提取一个
-frameFrequency = 1
-# 输出图片到当前目录video文件夹下
-outPutDirName = 'video/' + sourceFileName + '/'
-if not os.path.exists(outPutDirName):
-    # 如果文件目录不存在则创建目录
-    os.makedirs(outPutDirName)
-camera = cv2.VideoCapture(video_path)
-while True:
-    times += 1
-    res, image = camera.read()
-    if not res:
-        print('not res , not image')
-        break
-    if times % frameFrequency == 0:
-        cv2.imwrite(outPutDirName + str(times) + '.png', image)
-        print(outPutDirName + str(times) + '.png')
-print('Done')
-camera.release()
+
+
+def main(video_path, output_dir, fps):
+    """ The program runs the main function interface.
+
+    Args:
+        video_path: Handle the absolute position of video.
+        output_dir: Video intercepts the saved directory location.
+        fps: Set how many images video plays per second.
+    """
+
+    # Create a directory if the file directory does not exist.
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    camera = cv2.VideoCapture(video_path)
+
+    for i in range(0, 6000):
+        res, image = camera.read()
+
+        if not res:
+            print('not res , not image')
+            break
+
+        if i % fps == 0:
+            cv2.imwrite(output_dir + str(i) + '.png', image)
+            print(output_dir + str(i) + '.png')
+
+    print('Done')
+    camera.release()
+
+
+if __name__ == '__main__':
+    main('pikachu.mp4', '/video/', 1)
