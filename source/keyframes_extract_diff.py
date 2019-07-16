@@ -14,8 +14,6 @@
 
 
 """
-Created on Tue Dec  4 16:48:57 2018
-keyframes extract tool
 this key frame extract algorithm is based on interframe difference.
 The principle is very simple
 First, we load the video and compute the interframe difference between each frames
@@ -37,31 +35,40 @@ all based on the difference method:
 After a few experiment, the third method has a better key frame extraction effect.
 The original code comes from the link below, I optimized the code to reduce
 unnecessary memory consumption.
-https://blog.csdn.net/qq_21997625/article/details/81285096
-@author: zyb_as
 """
 import cv2
-import operator
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
 from scipy.signal import argrelextrema
+
+import os
+
+
+# Video path of the source file
+videopath = 'pikachu.mp4'
+# Directory to store the processed frames
+output_dir = './extract_result/'
+# smoothing window size
+len_window = int(50)
+
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 
 
 def smooth(x, window_len=13, window='hanning'):
-    """smooth the data using a window with requested size.
+    """ smooth the data using a window with requested size.
 
     This method is based on the convolution of a scaled window with the signal.
     The signal is prepared by introducing reflected copies of the signal
     (with the window size) in both ends so that transient parts are minimized
     in the begining and end part of the output signal.
 
-    input:
+    Args:
         x: the input signal
         window_len: the dimension of the smoothing window
         window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
             flat window will produce a moving average smoothing.
-    output:
+    Returns:
         the smoothed signal
 
     example:
@@ -78,22 +85,9 @@ def smooth(x, window_len=13, window='hanning'):
     TODO: the window parameter could be the window itself if an array instead of a string
     """
     print(len(x), window_len)
-    # if x.ndim != 1:
-    #     raise ValueError, "smooth only accepts 1 dimension arrays."
-    #
-    # if x.size < window_len:
-    #     raise ValueError, "Input vector needs to be bigger than window size."
-    #
-    # if window_len < 3:
-    #     return x
-    #
-    # if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-    # raise ValueError, "Window is on of 'flat', 'hanning', 'hamming',
-    # 'bartlett', 'blackman'"
 
     s = np.r_[2 * x[0] - x[window_len:1:-1],
               x, 2 * x[-1] - x[-1:-window_len:-1]]
-    # print(len(s))
 
     if window == 'flat':  # moving average
         w = np.ones(window_len, 'd')
@@ -108,9 +102,9 @@ class Frame:
 
     """
 
-    def __init__(self, id, diff):
-        self.id = id
-        self.diff = diff
+    def __init__(self, video_id, pic_diff):
+        self.id = video_id
+        self.different = pic_diff
 
     def __lt__(self, other):
         if self.id == other.id:
@@ -128,42 +122,23 @@ class Frame:
 
 
 def rel_change(a, b):
-    x = (b - a) / max(a, b)
-    print(x)
-    return x
+    return (b - a) / max(a, b)
 
 
-if __name__ == "__main__":
-    print(sys.executable)
-    # Setting fixed threshold criteria
-    USE_THRESH = False
-    # fixed threshold value
-    THRESH = 0.6
-    # Setting fixed threshold criteria
-    USE_TOP_ORDER = False
+def main():
     # Setting local maxima criteria
     USE_LOCAL_MAXIMA = True
-    # Number of top sorted frames
-    NUM_TOP_FRAMES = 50
-
-    # Video path of the source file
-    videopath = 'pikachu.mp4'
-    # Directory to store the processed frames
-    dir = './extract_result/'
-    # smoothing window size
-    len_window = int(50)
 
     print("target video :" + videopath)
-    print("frame save directory: " + dir)
+    print("frame save directory: " + output_dir)
     # load video and compute diff between frames
     cap = cv2.VideoCapture(str(videopath))
-    curr_frame = None
     prev_frame = None
     frame_diffs = []
     frames = []
     success, frame = cap.read()
     i = 0
-    while(success):
+    while success:
         luv = cv2.cvtColor(frame, cv2.COLOR_BGR2LUV)
         curr_frame = luv
         if curr_frame is not None and prev_frame is not None:
@@ -181,17 +156,7 @@ if __name__ == "__main__":
 
     # compute keyframe
     keyframe_id_set = set()
-    if USE_TOP_ORDER:
-        # sort the list in descending order
-        frames.sort(key=operator.attrgetter("diff"), reverse=True)
-        for keyframe in frames[:NUM_TOP_FRAMES]:
-            keyframe_id_set.add(keyframe.id)
-    if USE_THRESH:
-        print("Using Threshold")
-        for i in range(1, len(frames)):
-            if (rel_change(np.float(frames[i - 1].diff),
-                           np.float(frames[i].diff)) >= THRESH):
-                keyframe_id_set.add(frames[i].id)
+
     if USE_LOCAL_MAXIMA:
         print("Using Local Maxima")
         diff_array = np.array(frame_diffs)
@@ -201,21 +166,23 @@ if __name__ == "__main__":
             keyframe_id_set.add(frames[i - 1].id)
 
         plt.figure(figsize=(40, 20))
-        plt.locator_params(numticks=100)
-        plt.stem(sm_diff_array)
-        plt.savefig(dir + 'plot.png')
+        plt.locator_params()
+        plt.stem(sm_diff_array, use_line_collection=True)
+        plt.savefig(output_dir + 'plot.png')
 
     # save all keyframes as image
     cap = cv2.VideoCapture(str(videopath))
-    curr_frame = None
-    keyframes = []
     success, frame = cap.read()
     idx = 0
-    while(success):
+    while success:
         if idx in keyframe_id_set:
             name = "keyframe_" + str(idx) + ".jpg"
-            cv2.imwrite(dir + name, frame)
+            cv2.imwrite(output_dir + name, frame)
             keyframe_id_set.remove(idx)
         idx = idx + 1
         success, frame = cap.read()
     cap.release()
+
+
+if __name__ == "__main__":
+    main()
