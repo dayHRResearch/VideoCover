@@ -20,30 +20,24 @@ import time
 import cv2
 
 
-parser = argparse.ArgumentParser('Extract mp4 key frame and extract smile face feature!')
+def check_exists():
+    # Create a directory if the file directory does not exist.
+    if not os.path.exists(args.images_dir):
+        os.makedirs(args.images_dir)
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
 
-parser.add_argument('--video_path', required=False, type=str, default='./video1.mp4')
-parser.add_argument('--images_dir', required=False, type=str, default='./video1',
-                    help='Enter the key frame saved directory.')
-parser.add_argument('--output_dir', required=False, type=str, default='./smile')
 
-args = parser.parse_args()
+def detector():
+    # Face detector
+    face_path = '../data/face_improved.xml'
+    face_detector = cv2.CascadeClassifier(face_path)
 
-# Create a directory if the file directory does not exist.
-if not os.path.exists(args.images_dir):
-    os.makedirs(args.images_dir)
-if not os.path.exists(args.output_dir):
-    os.makedirs(args.output_dir)
+    # Smile detector
+    smile_path = '../data/smile.xml'
+    smile_detector = cv2.CascadeClassifier(smile_path)
 
-smile_path = args.output_dir + '/' + args.images_dir + '_smile.png'
-
-# Face detector
-facePath = '../data/face_improved.xml'
-faceCascade = cv2.CascadeClassifier(facePath)
-
-# Smile detector
-smilePath = '../data/smile.xml'
-smileCascade = cv2.CascadeClassifier(smilePath)
+    return face_detector, smile_detector
 
 
 def video_to_image():
@@ -91,10 +85,15 @@ def detector_smile():
         If multiple smiley faces are detected, save the best one.
         If there is no smiley face, the 120th frame image is saved by default.
     """
+    # In case no smiley faces are detected.
     flag = True
+    # load detector
+    face_detector, smile_detector = detector()
+
     # Choose a smile if the machine doesn't recognize it.
     alternative_smile_path = args.images_dir + '/' + '120.png'
     alternative_smile = cv2.imread(alternative_smile_path)
+
     for file in os.listdir(args.images_dir):
         # Determine the user's maximum smile
         smile_degree_min = 0
@@ -104,8 +103,7 @@ def detector_smile():
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # First, it detects the face and returns a rectangle that holds the
-        # face
-        faces = faceCascade.detectMultiScale(
+        faces = face_detector.detectMultiScale(
             gray,
             scaleFactor=1.1,
             minNeighbors=8,
@@ -121,7 +119,7 @@ def detector_smile():
                 # roi_color = img[y:y + h, x:x + w]
 
                 # Smiley face detection
-                smile = smileCascade.detectMultiScale(
+                smile = smile_detector.detectMultiScale(
                     face_image,
                     scaleFactor=1.16,
                     minNeighbors=35,
@@ -136,19 +134,40 @@ def detector_smile():
 
                 if smile is not None:
                     for i in smile:
+                        # Gets the height that identifies the smiley face box.
                         smile_degree_max = i[3]
                         if smile_degree_max > smile_degree_min:
-                            cv2.imwrite(smile_path, img)
+                            cv2.imwrite(args.output_dir + '/' + args.images_dir + '_smile.png', img)
                             smile_degree_min = smile_degree_max
                             flag = False
     if flag:
-        cv2.imwrite(smile_path, alternative_smile)
+        cv2.imwrite(args.output_dir + '/' + args.images_dir + '_smile.png', alternative_smile)
 
 
-if __name__ == '__main__':
+def main():
     print(f'source video path: `{args.video_path}`.')
     print(f'target images dir: `{args.images_dir}`.')
     start = time.time()
+    # step 1: Detects which folders are needed to run the program.
+    check_exists()
+    # step 2: Is video to randomly extract multiple key covers.
     video_to_image()
+    # step 3: Identify the best smiley faces in the keyframe file directory.
     detector_smile()
     print(f'Done!\nTimes: {time.time() - start:.4f} s.')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser('Extract mp4 key frame and extract smile face feature!')
+
+    parser.add_argument('--video_path', required=False, type=str, default='./video1.mp4',
+                        help='The default file for testing is demo1.mp4 video, '
+                             'which will require the user to specify the file in the actual run.')
+    parser.add_argument('--images_dir', required=False, type=str, default='./video1',
+                        help='The demo1 folder is where the images are saved by default when tested,'
+                             'which in practice requires the user to specify the save directory.')
+    parser.add_argument('--output_dir', required=False, type=str, default='./smile',
+                        help='Save the smiley path, non-final run path, need to be defined')
+
+    args = parser.parse_args()
+    main()
