@@ -49,7 +49,7 @@ from scipy.signal import argrelextrema
 
 parser = argparse.ArgumentParser('Extract mp4 key frame and extract smiley face feature')
 
-parser.add_argument('--video_path', required=False, type=str, default='./example1.mp4',
+parser.add_argument('--video_path', required=False, type=str, default='./video1.mp4',
                     help='Video path of the source file.')
 parser.add_argument('--window_length', required=False, type=int, default=50)
 
