@@ -16,7 +16,7 @@
 """
 this key frame extract algorithm is based on interframe difference.
 The principle is very simple
-First, we load the video and compute the interframe difference between each frames
+First, we load the example1 and compute the interframe difference between each frames
 Then, we can choose one of these three methods to extract keyframes, which are
 all based on the difference method:
 
@@ -36,20 +36,27 @@ After a few experiment, the third method has a better key frame extraction effec
 The original code comes from the link below, I optimized the code to reduce
 unnecessary memory consumption.
 """
+
+
+import os
+import argparse
+
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
 
-import os
 
+parser = argparse.ArgumentParser('Extract mp4 key frame and extract smiley face feature')
 
-# Video path of the source file
-videopath = './example1.mp4'
+parser.add_argument('--video_path', required=False, type=str, default='./example1.mp4',
+                    help='Video path of the source file.')
+parser.add_argument('--window_length', required=False, type=int, default=50)
+
+args = parser.parse_args()
+
 # Directory to store the processed frames
-output_dir = './video/'
-# smoothing window size
-len_window = int(50)
+output_dir = os.path.splitext(args.video_path)[0]
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
@@ -81,8 +88,6 @@ def smooth(x, window_len=13, window='blackman'):
 
     numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
     scipy.signal.lfilter
-
-    TODO: the window parameter could be the window itself if an array instead of a string
     """
     # print(len(x), window_len)
 
@@ -126,10 +131,10 @@ def rel_change(a, b):
 
 
 def main():
-    print("target video :" + videopath)
+    print("target example1 :" + args.video_path)
     print("frame save directory: " + output_dir)
-    # load video and compute diff between frames
-    cap = cv2.VideoCapture(str(videopath))
+    # load example1 and compute diff between frames
+    cap = cv2.VideoCapture(str(args.video_path))
     prev_frame = None
     frame_diffs = []
     frames = []
@@ -154,9 +159,8 @@ def main():
     # compute keyframe
     keyframe_id_set = set()
 
-    print("Using Local Maxima")
     diff_array = np.array(frame_diffs)
-    sm_diff_array = smooth(diff_array, len_window)
+    sm_diff_array = smooth(diff_array, args.window_length)
     frame_indexes = np.asarray(argrelextrema(sm_diff_array, np.greater))[0]
     for i in frame_indexes:
         keyframe_id_set.add(frames[i - 1].id)
@@ -164,16 +168,16 @@ def main():
     plt.figure(figsize=(40, 20))
     plt.locator_params()
     plt.stem(sm_diff_array, use_line_collection=True)
-    plt.savefig(output_dir + 'plot.png')
 
     # save all keyframes as image
-    cap = cv2.VideoCapture(str(videopath))
+    cap = cv2.VideoCapture(str(args.video_path))
     success, frame = cap.read()
     idx = 0
     while success:
         if idx in keyframe_id_set:
             name = str(idx) + ".png"
-            cv2.imwrite(output_dir + name, frame)
+            img_save_path = os.path.join(output_dir, name)
+            cv2.imwrite(img_save_path, frame)
             keyframe_id_set.remove(idx)
         idx = idx + 1
         success, frame = cap.read()
