@@ -13,11 +13,13 @@
 # ==============================================================================
 
 
-import cv2
 import os
+import time
+
+import cv2
 
 
-def main(video_path, output_dir, fps):
+def video_to_image(video_path, output_dir, fps):
     """ The program runs the main function interface.
 
     Args:
@@ -40,11 +42,13 @@ def main(video_path, output_dir, fps):
 
         if i % fps == 0:
             cv2.imwrite(output_dir + str(i) + '.png', image)
-            print(output_dir + str(i) + '.png')
+            # print(output_dir + str(i) + '.png')
 
-    print('Done')
     camera.release()
 
 
 if __name__ == '__main__':
-    main('./video2.mp4', './video2/', 25)
+    start = time.time()
+    video_to_image('./video5.mp4', './video5/', 17)
+    print(f'Done! Times: {time.time() - start:.4f} s.')
+

@@ -40,6 +40,7 @@ unnecessary memory consumption.
 
 import os
 import argparse
+import time
 
 import cv2
 import numpy as np
@@ -49,7 +50,7 @@ from scipy.signal import argrelextrema
 
 parser = argparse.ArgumentParser('Extract mp4 key frame and extract smiley face feature')
 
-parser.add_argument('--video_path', required=False, type=str, default='./video1.mp4',
+parser.add_argument('--video_path', required=False, type=str, default='./video5.mp4',
                     help='Video path of the source file.')
 parser.add_argument('--window_length', required=False, type=int, default=50)
 
@@ -131,8 +132,6 @@ def rel_change(a, b):
 
 
 def main():
-    print("target example1 :" + args.video_path)
-    print("frame save directory: " + output_dir)
     # load example1 and compute diff between frames
     cap = cv2.VideoCapture(str(args.video_path))
     prev_frame = None
@@ -185,4 +184,6 @@ def main():
 
 
 if __name__ == "__main__":
+    start = time.time()
     main()
+    print(f'Done! Times: {time.time() - start:.4f} s.')
