@@ -19,10 +19,10 @@ import argparse
 import cv2
 
 
-parser = argparse.ArgumentParser('Extract video key frame and extract smiley face feature')
+parser = argparse.ArgumentParser('Extract mp4 key frame and extract smiley face feature')
 
-parser.add_argument('--input_dir', required=False, type=str, default='./video',
-                    help='Enter the key frame saved directory in video.')
+parser.add_argument('--input_dir', required=False, type=str, default='./example1',
+                    help='Enter the key frame saved directory.')
 parser.add_argument('--output_dir', required=False, type=str, default='./smile')
 
 args = parser.parse_args()
@@ -30,7 +30,7 @@ args = parser.parse_args()
 if not os.path.exists(args.output_dir):
     os.makedirs(args.output_dir)
 
-smile_path = os.path.join(args.output_dir, 'smile.png')
+smile_path = args.output_dir + '/' + args.input_dir + '_smile.png'
 
 # Face detector
 facePath = "../data/face.xml"
@@ -78,9 +78,7 @@ def main():
             #     cv2.putText(img, 'Smile', (x, y - 7), 3,
             #                 1.2, (0, 255, 0), 2, cv2.LINE_AA)
 
-            if smile is None:
-                continue
-            else:
+            if smile is not None:
                 cv2.imwrite(smile_path, img)
 
 
