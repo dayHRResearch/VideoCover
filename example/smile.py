@@ -27,18 +27,21 @@ parser.add_argument('--output_dir', required=False, tyep=str, default='./smile.p
 
 args = parser.parse_args()
 
-# 人脸检测器
-facePath = "../data/lbpcascade_frontalface.xml"
+if not os.path.exists(args.output_dir):
+    os.makedirs(args.output_dir)
+
+#
+facePath = "../data/face.xml"
 faceCascade = cv2.CascadeClassifier(facePath)
 
 # 笑脸检测器
-smilePath = "../data/haarcascade_smile.xml"
+smilePath = "../data/smile.xml"
 smileCascade = cv2.CascadeClassifier(smilePath)
 
 
 def main():
     for file in os.listdir(args.input_dir):
-        file_path = os.path.join('./video', file)
+        file_path = os.path.join(args.input_dir, file)
         img = cv2.imread(file_path)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -61,8 +64,8 @@ def main():
             smile = smileCascade.detectMultiScale(
                 roi_gray,
                 scaleFactor=1.16,
-                minNeighbors=35,
-                minSize=(10, 10),
+                minNeighbors=30,
+                minSize=(15, 15),
                 flags=cv2.CASCADE_SCALE_IMAGE
             )
 
