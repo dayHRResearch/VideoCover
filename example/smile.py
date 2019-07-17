@@ -21,7 +21,7 @@ import cv2
 
 parser = argparse.ArgumentParser('Extract mp4 key frame and extract smiley face feature')
 
-parser.add_argument('--input_dir', required=False, type=str, default='./example1',
+parser.add_argument('--input_dir', required=False, type=str, default='./video1',
                     help='Enter the key frame saved directory.')
 parser.add_argument('--output_dir', required=False, type=str, default='./smile')
 
@@ -67,7 +67,7 @@ def main():
                 roi_gray,
                 scaleFactor=1.16,
                 minNeighbors=30,
-                minSize=(15, 15),
+                minSize=(25, 25),
                 flags=cv2.CASCADE_SCALE_IMAGE
             )
 
