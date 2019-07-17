@@ -45,9 +45,9 @@ import os
 
 
 # Video path of the source file
-videopath = '../example/resume.mp4'
+videopath = '../../example/resume.mp4'
 # Directory to store the processed frames
-output_dir = '../example/extract_result/'
+output_dir = '../../example/video/'
 # smoothing window size
 len_window = int(50)
 
@@ -126,9 +126,6 @@ def rel_change(a, b):
 
 
 def main():
-    # Setting local maxima criteria
-    USE_LOCAL_MAXIMA = True
-
     print("target video :" + videopath)
     print("frame save directory: " + output_dir)
     # load video and compute diff between frames
@@ -157,18 +154,17 @@ def main():
     # compute keyframe
     keyframe_id_set = set()
 
-    if USE_LOCAL_MAXIMA:
-        print("Using Local Maxima")
-        diff_array = np.array(frame_diffs)
-        sm_diff_array = smooth(diff_array, len_window)
-        frame_indexes = np.asarray(argrelextrema(sm_diff_array, np.greater))[0]
-        for i in frame_indexes:
-            keyframe_id_set.add(frames[i - 1].id)
+    print("Using Local Maxima")
+    diff_array = np.array(frame_diffs)
+    sm_diff_array = smooth(diff_array, len_window)
+    frame_indexes = np.asarray(argrelextrema(sm_diff_array, np.greater))[0]
+    for i in frame_indexes:
+        keyframe_id_set.add(frames[i - 1].id)
 
-        plt.figure(figsize=(40, 20))
-        plt.locator_params()
-        plt.stem(sm_diff_array, use_line_collection=True)
-        plt.savefig(output_dir + 'plot.png')
+    plt.figure(figsize=(40, 20))
+    plt.locator_params()
+    plt.stem(sm_diff_array, use_line_collection=True)
+    plt.savefig(output_dir + 'plot.png')
 
     # save all keyframes as image
     cap = cv2.VideoCapture(str(videopath))
@@ -176,7 +172,7 @@ def main():
     idx = 0
     while success:
         if idx in keyframe_id_set:
-            name = "keyframe_" + str(idx) + ".png"
+            name = str(idx) + ".png"
             cv2.imwrite(output_dir + name, frame)
             keyframe_id_set.remove(idx)
         idx = idx + 1
