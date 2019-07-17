@@ -21,7 +21,7 @@ import cv2
 
 parser = argparse.ArgumentParser('Extract mp4 key frame and extract smiley face feature')
 
-parser.add_argument('--input_dir', required=False, type=str, default='./video1',
+parser.add_argument('--input_dir', required=False, type=str, default='./video2',
                     help='Enter the key frame saved directory.')
 parser.add_argument('--output_dir', required=False, type=str, default='./smile')
 
@@ -33,7 +33,7 @@ if not os.path.exists(args.output_dir):
 smile_path = args.output_dir + '/' + args.input_dir + '_smile.png'
 
 # Face detector
-facePath = "../data/face.xml"
+facePath = "../data/face_improved.xml"
 faceCascade = cv2.CascadeClassifier(facePath)
 
 # Smile detector
