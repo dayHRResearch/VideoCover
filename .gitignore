@@ -125,3 +125,7 @@ dmypy.json
 # IDE file
 .idea
 .vscode
+
+# test file
+*.png
+*.mp4
