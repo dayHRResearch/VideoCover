@@ -23,18 +23,20 @@ parser = argparse.ArgumentParser('Extract video key frame and extract smiley fac
 
 parser.add_argument('--input_dir', required=False, type=str, default='./video',
                     help='Enter the key frame saved directory in video.')
-parser.add_argument('--output_dir', required=False, tyep=str, default='./smile.png')
+parser.add_argument('--output_dir', required=False, type=str, default='./smile')
 
 args = parser.parse_args()
 
 if not os.path.exists(args.output_dir):
     os.makedirs(args.output_dir)
 
-#
+smile_path = os.path.join(args.output_dir, 'smile.png')
+
+# Face detector
 facePath = "../data/face.xml"
 faceCascade = cv2.CascadeClassifier(facePath)
 
-# 笑脸检测器
+# Smile detector
 smilePath = "../data/smile.xml"
 smileCascade = cv2.CascadeClassifier(smilePath)
 
@@ -56,9 +58,9 @@ def main():
 
         # Draw each face and extract the area of the face
         for (x, y, w, h) in faces:
-            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            # cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
             roi_gray = gray[y:y + h, x:x + w]
-            roi_color = img[y:y + h, x:x + w]
+            # roi_color = img[y:y + h, x:x + w]
 
             # Smiley face detection
             smile = smileCascade.detectMultiScale(
@@ -70,16 +72,16 @@ def main():
             )
 
             # Frame the corners of the mouth and label the smiling face.
-            for (x2, y2, w2, h2) in smile:
-                cv2.rectangle(
-                    roi_color, (x2, y2), (x2 + w2, y2 + h2), (255, 0, 0), 2)
-                cv2.putText(img, 'Smile', (x, y - 7), 3,
-                            1.2, (0, 255, 0), 2, cv2.LINE_AA)
+            # for (x2, y2, w2, h2) in smile:
+            #     cv2.rectangle(
+            #         roi_color, (x2, y2), (x2 + w2, y2 + h2), (255, 0, 0), 2)
+            #     cv2.putText(img, 'Smile', (x, y - 7), 3,
+            #                 1.2, (0, 255, 0), 2, cv2.LINE_AA)
 
             if smile is None:
                 continue
             else:
-                cv2.imwrite("../example/smile.png", img)
+                cv2.imwrite(smile_path, img)
 
 
 if __name__ == '__main__':
