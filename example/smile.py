@@ -47,11 +47,14 @@ smileCascade = cv2.CascadeClassifier(smilePath)
 
 
 def video_to_image():
-    """ The program runs the main function interface.
+    """ Divide video file into several consecutive frames.
+
+    Returns:
+        Multiple images in consecutive frames.
     """
     camera = cv2.VideoCapture(args.video_path)
 
-    for i in range(1, 6000):
+    for i in range(1, 99999):
         success, image = camera.read()
 
         if not success:
@@ -63,7 +66,31 @@ def video_to_image():
     camera.release()
 
 
-def detector_face():
+def image_to_video():
+    """ Combine multiple consecutive images into a single video file.
+
+    Returns:
+        A visual video file.
+    """
+    fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
+    video_writer = cv2.VideoWriter(args.video_path, fourcc, 25, (640, 362))
+
+    for i in range(0, 99999):
+        # check img exist
+        if os.path.exists(args.images_dir + str(i) + '.png'):
+            image = cv2.imread(args.video_path + str(i) + '.png')
+            video_writer.write(image)
+
+    video_writer.release()
+
+
+def detector_smile():
+    """ Perform smiley face detection on the images under the key frame.
+
+    Returns:
+        If multiple smiley faces are detected, save the best one.
+        If there is no smiley face, the 120th frame image is saved by default.
+    """
     flag = True
     # Choose a smile if the machine doesn't recognize it.
     alternative_smile_path = args.images_dir + '/' + '120.png'
@@ -123,5 +150,5 @@ if __name__ == '__main__':
     print(f'target images dir: `{args.images_dir}`.')
     start = time.time()
     video_to_image()
-    detector_face()
+    detector_smile()
     print(f'Done!\nTimes: {time.time() - start:.4f} s.')
