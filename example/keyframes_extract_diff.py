@@ -45,7 +45,7 @@ import os
 
 
 # Video path of the source file
-videopath = './resume.mp4'
+videopath = './example1.mp4'
 # Directory to store the processed frames
 output_dir = './video/'
 # smoothing window size
@@ -84,7 +84,7 @@ def smooth(x, window_len=13, window='blackman'):
 
     TODO: the window parameter could be the window itself if an array instead of a string
     """
-    print(len(x), window_len)
+    # print(len(x), window_len)
 
     s = np.r_[2 * x[0] - x[window_len:1:-1],
               x, 2 * x[-1] - x[-1:-window_len:-1]]
