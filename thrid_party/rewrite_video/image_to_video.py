@@ -21,17 +21,17 @@ def main(filename, fps, frame_size, img_start, img_end):
 
     Args:
         filename: Video file name.
-        fps: Set how many images video plays per second..
-        frame_size: Size of frame in video.
-        img_start: The image is transformed into the starting target of the video image.
-        img_end: The image is transformed into the ending target of the video image
+        fps: Set how many images example1 plays per second..
+        frame_size: Size of frame in example1.
+        img_start: The image is transformed into the starting target of the example1 image.
+        img_end: The image is transformed into the ending target of the example1 image
     """
     fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
     video_writer = cv2.VideoWriter(filename, fourcc, fps, frame_size)
 
     for i in range(img_start, img_end):
         # check img exist
-        if os.path.exists('./video/' + str(i) + '.png'):
+        if os.path.exists('./example1/' + str(i) + '.png'):
             img = cv2.imread(filename + str(i) + '.png')
             video_writer.write(img)
 
