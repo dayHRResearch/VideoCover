@@ -1,2 +1,3 @@
 # VideoCover
- Video cover screenshot
+
+Smile detection based on OpenCV implemented in Python
