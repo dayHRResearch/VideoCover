@@ -21,9 +21,9 @@ def main(video_path, output_dir, fps):
     """ The program runs the main function interface.
 
     Args:
-        video_path: Handle the absolute position of video.
+        video_path: Handle the absolute position of example1.
         output_dir: Video intercepts the saved directory location.
-        fps: Set how many images video plays per second.
+        fps: Set how many images example1 plays per second.
     """
 
     # Create a directory if the file directory does not exist.
@@ -48,4 +48,4 @@ def main(video_path, output_dir, fps):
 
 
 if __name__ == '__main__':
-    main('./resume.mp4', './video/', 50)
+    main('./resume.mp4', './example1/', 50)
