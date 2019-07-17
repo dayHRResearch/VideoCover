@@ -51,19 +51,23 @@ def video_to_image():
     """
     camera = cv2.VideoCapture(args.video_path)
 
-    for i in range(0, 6000):
-        res, image = camera.read()
+    for i in range(1, 6000):
+        success, image = camera.read()
 
-        if not res:
+        if not success:
             break
 
-        if i % 17 == 0:
+        if i % 20 == 0:
             cv2.imwrite(args.images_dir + '/' + str(i) + '.png', image)
 
     camera.release()
 
 
 def detector_face():
+    flag = True
+    # Choose a smile if the machine doesn't recognize it.
+    alternative_smile_path = args.images_dir + '/' + '120.png'
+    alternative_smile = cv2.imread(alternative_smile_path)
     for file in os.listdir(args.images_dir):
         # Determine the user's maximum smile
         smile_degree_min = 0
@@ -109,10 +113,9 @@ def detector_face():
                         if smile_degree_max > smile_degree_min:
                             cv2.imwrite(smile_path, img)
                             smile_degree_min = smile_degree_max
-                        else:
-                            pass
-        else:
-            pass
+                            flag = False
+    if flag:
+        cv2.imwrite(smile_path, alternative_smile)
 
 
 if __name__ == '__main__':
@@ -121,4 +124,4 @@ if __name__ == '__main__':
     start = time.time()
     video_to_image()
     detector_face()
-    print(f'Done! Times: {time.time() - start:.4f} s.')
+    print(f'Done!\nTimes: {time.time() - start:.4f} s.')
