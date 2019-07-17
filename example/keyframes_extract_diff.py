@@ -45,9 +45,9 @@ import os
 
 
 # Video path of the source file
-videopath = '../../example/resume.mp4'
+videopath = './resume.mp4'
 # Directory to store the processed frames
-output_dir = '../../example/video/'
+output_dir = './video/'
 # smoothing window size
 len_window = int(50)
 
@@ -64,9 +64,9 @@ def smooth(x, window_len=13, window='blackman'):
     in the begining and end part of the output signal.
 
     Args:
-        x: the input signal
-        window_len: the dimension of the smoothing window
-        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
+        x: the input signal.
+        window_len: the dimension of the smoothing window.
+        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'.
             flat window will produce a moving average smoothing.
     Returns:
         the smoothed signal

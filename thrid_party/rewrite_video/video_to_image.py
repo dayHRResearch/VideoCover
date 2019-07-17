@@ -48,4 +48,4 @@ def main(video_path, output_dir, fps):
 
 
 if __name__ == '__main__':
-    main('../example/resume.mp4', '../example/video/', 50)
+    main('./resume.mp4', './video/', 50)
