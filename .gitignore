@@ -130,3 +130,6 @@ dmypy.json
 *.png
 *.mp4
 .DS_Store
+
+# cmake file
+source/CMakeFiles
