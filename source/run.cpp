@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include "opencv4/opencv2/highgui.hpp"
 #include "opencv4/opencv2/imgproc.hpp"
@@ -8,20 +9,18 @@ using namespace cv;
 
 static void help() {
   printf(
-      "\nThis program demonstrates the smile detector.Contains two functions:\n"
-      "1.Converting Video Files to Pictures.\n"
-      "2.Extract the smiling pictures from the pictures.\n"
-      "Usage:\n"
-      "./smile [--url=<the URL of the incoming video>]\n"
-      "Example:\n"
-      "./smile https://www.google.com\n"
-      "\tUsing OpenCV version %s",
-      CV_VERSION);
+         "\nThis program demonstrates the smile detector.Contains two functions:\n"
+         "1.Converting Video Files to Pictures.\n"
+         "2.Extract the smiling pictures from the pictures.\n"
+         "Usage:\n"
+         "./smile [--url=<the URL of the incoming video>]\n"
+         "Example:\n"
+         "./smile https://www.google.com\n"
+         "\tUsing OpenCV version %s", CV_VERSION);
   printf("\n");
 }
 
-void checkDirExists() {}
-
+void checkDirExists(fstream _dir) {}
 void detectAndDraw(Mat& img, CascadeClassifier& cascade,
                    CascadeClassifier& nestedCascade, double scale,
                    bool tryflip);
@@ -30,79 +29,85 @@ string cascadeName;
 string nestedCascadeName;
 
 int main(int argc, const char** argv) {
-  VideoCapture capture;
-  Mat frame, image;
-  string inputName;
-  bool tryflip;
+  // VideoCapture capture;
+  // Mat frame, image;
+  // string inputName;
+  // bool tryflip;
 
-  // help();
+  // // help();
 
-  CascadeClassifier cascade, nestedCascade;
-  double scale;
-  cv::CommandLineParser parser(
-      argc, argv,
-      "{help h||}{scale|1|}"
-      "{cascade|data/haarcascades/haarcascade_frontalface_alt.xml|}"
-      "{smile-cascade|data/haarcascades/haarcascade_smile.xml|}"
-      "{try-flip||}{@input||}");
-  if (parser.has("help")) {
-    help();
-    return 0;
-  }
-  cascadeName = samples::findFile(parser.get<string>("cascade"));
-  nestedCascadeName = samples::findFile(parser.get<string>("smile-cascade"));
-  tryflip = parser.has("try-flip");
-  inputName = parser.get<string>("@input");
-  scale = parser.get<int>("scale");
-  if (!parser.check()) {
-    help();
-    return 1;
-  }
-  if (scale < 1) scale = 1;
-  if (!cascade.load(cascadeName)) {
-    cerr << "ERROR: Could not load face cascade" << endl;
-    help();
-    return -1;
-  }
-  if (!nestedCascade.load(nestedCascadeName)) {
-    cerr << "ERROR: Could not load smile cascade" << endl;
-    help();
-    return -1;
-  }
-  if (inputName.empty() || (isdigit(inputName[0]) && inputName.size() == 1)) {
-    int c = inputName.empty() ? 0 : inputName[0] - '0';
-    if (!capture.open(c)) printf("Capture from camera #%d didn't work.\n", c);
-  } else if (inputName.size()) {
-    inputName = samples::findFileOrKeep(inputName);
-    if (!capture.open(inputName))
-      printf("Could not read %s .\n", inputName.c_str());
-  }
+  // CascadeClassifier cascade, nestedCascade;
+  // double scale;
+  // cv::CommandLineParser parser(
+  //     argc, argv,
+  //     "{help h||}{scale|1|}"
+  //     "{cascade|data/haarcascades/haarcascade_frontalface_alt.xml|}"
+  //     "{smile-cascade|data/haarcascades/haarcascade_smile.xml|}"
+  //     "{try-flip||}{@input||}");
+  // if (parser.has("help")) {
+  //   help();
+  //   return 0;
+  // }
+  // cascadeName = samples::findFile(parser.get<string>("cascade"));
+  // nestedCascadeName = samples::findFile(parser.get<string>("smile-cascade"));
+  // tryflip = parser.has("try-flip");
+  // inputName = parser.get<string>("@input");
+  // scale = parser.get<int>("scale");
+  // if (!parser.check()) {
+  //   help();
+  //   return 1;
+  // }
+  // if (scale < 1) scale = 1;
+  // if (!cascade.load(cascadeName)) {
+  //   cerr << "ERROR: Could not load face cascade" << endl;
+  //   help();
+  //   return -1;
+  // }
+  // if (!nestedCascade.load(nestedCascadeName)) {
+  //   cerr << "ERROR: Could not load smile cascade" << endl;
+  //   help();
+  //   return -1;
+  // }
+  // if (inputName.empty() || (isdigit(inputName[0]) && inputName.size() == 1)) {
+  //   int c = inputName.empty() ? 0 : inputName[0] - '0';
+  //   if (!capture.open(c)) printf("Capture from camera #%d didn't work.\n", c);
+  // } else if (inputName.size()) {
+  //   inputName = samples::findFileOrKeep(inputName);
+  //   if (!capture.open(inputName))
+  //     printf("Could not read %s .\n", inputName.c_str());
+  // }
 
-  if (capture.isOpened()) {
-    cout << "Video capturing has been started ..." << endl;
-    cout << endl
-         << "NOTE: Smile intensity will only be valid after a first smile has "
-            "been detected"
-         << endl;
+  // if (capture.isOpened()) {
+  //   cout << "Video capturing has been started ..." << endl;
+  //   cout << endl
+  //        << "NOTE: Smile intensity will only be valid after a first smile has "
+  //           "been detected"
+  //        << endl;
 
-    for (;;) {
-      capture >> frame;
-      if (frame.empty()) break;
+  //   for (;;) {
+  //     capture >> frame;
+  //     if (frame.empty()) break;
 
-      Mat frame1 = frame.clone();
-      detectAndDraw(frame1, cascade, nestedCascade, scale, tryflip);
+  //     Mat frame1 = frame.clone();
+  //     detectAndDraw(frame1, cascade, nestedCascade, scale, tryflip);
 
-      char c = (char)waitKey(10);
-      if (c == 27 || c == 'q' || c == 'Q') break;
-    }
-  } else {
-    cerr << "ERROR: Could not initiate capture" << endl;
-    help();
-    return -1;
-  }
-
+  //     char c = (char)waitKey(10);
+  //     if (c == 27 || c == 'q' || c == 'Q') break;
+  //   }
+  // } else {
+  //   cerr << "ERROR: Could not initiate capture" << endl;
+  //   help();
+  //   return -1;
+  // }
+  checkDirExists();
   return 0;
 }
+
+// Create a directory if the file directory does not exist.
+void checkDirExists(fstream _dir) { 
+  _dir.open("./images/", ios::in);
+  if (!_dir) printf("File not exists.")
+  else printf("File exists")
 
 void detectAndDraw(Mat& img, CascadeClassifier& cascade,
                    CascadeClassifier& nestedCascade, double scale,
