@@ -16,6 +16,8 @@
 import os
 import argparse
 import time
+import urllib.request
+import shutil
 
 import cv2
 
@@ -26,6 +28,14 @@ def check_exists():
         os.makedirs(args.images_dir)
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
+
+
+def download_url(url):
+    video_name = 'video.mp4'
+    file = urllib.request.urlopen(url)
+    with open(video_name, "wb") as video:
+        video.write(file.read())
+    return video_name
 
 
 def detector():
@@ -46,7 +56,7 @@ def video_to_image():
     Returns:
         Multiple images in consecutive frames.
     """
-    camera = cv2.VideoCapture(args.video_path)
+    camera = cv2.VideoCapture(video_path)
 
     for i in range(1, 99999):
         success, image = camera.read()
@@ -67,12 +77,12 @@ def image_to_video():
         A visual video file.
     """
     fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-    video_writer = cv2.VideoWriter(args.video_path, fourcc, 25, (640, 362))
+    video_writer = cv2.VideoWriter(video_path, fourcc, 25, (640, 362))
 
     for i in range(0, 99999):
         # check img exist
         if os.path.exists(args.images_dir + str(i) + '.png'):
-            image = cv2.imread(args.video_path + str(i) + '.png')
+            image = cv2.imread(video_path + str(i) + '.png')
             video_writer.write(image)
 
     video_writer.release()
@@ -142,10 +152,18 @@ def detector_smile():
                             flag = False
     if flag:
         cv2.imwrite(args.output_dir + '/' + args.images_dir + '_smile.png', alternative_smile)
+        return args.output_dir + '/' + args.images_dir + '_smile.png'
+
+    return args.output_dir + '/' + args.images_dir + '_smile.png'
+
+
+def remove_temp_file():
+    os.remove(video_path)
+    shutil.rmtree(os.path.splitext(video_path)[0])
 
 
 def main():
-    print(f'source video path: `{args.video_path}`.')
+    print(f'source video path: `{video_path}`.')
     print(f'target images dir: `{args.images_dir}`.')
     start = time.time()
     # step 1: Detects which folders are needed to run the program.
@@ -154,20 +172,26 @@ def main():
     video_to_image()
     # step 3: Identify the best smiley faces in the keyframe file directory.
     detector_smile()
+    remove_temp_file()
     print(f'Done!\nTimes: {time.time() - start:.4f} s.')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Extract mp4 key frame and extract smile face feature!')
 
-    parser.add_argument('--video_path', required=False, type=str, default='./video1.mp4',
-                        help='The default file for testing is demo1.mp4 video, '
-                             'which will require the user to specify the file in the actual run.')
-    parser.add_argument('--images_dir', required=False, type=str, default='./video1',
+    # parser.add_argument('--video_path', required=False, type=str, default='./video1.mp4',
+    #                     help='The default file for testing is demo1.mp4 video, '
+    #                          'which will require the user to specify the file in the actual run.')
+    parser.add_argument('--images_dir', required=False, type=str, default='./video',
                         help='The demo1 folder is where the images are saved by default when tested,'
                              'which in practice requires the user to specify the save directory.')
     parser.add_argument('--output_dir', required=False, type=str, default='./smile',
                         help='Save the smiley path, non-final run path, need to be defined')
 
     args = parser.parse_args()
+    # download url file
+    video_path = download_url('https://vd3.bdstatic.com/mda-iidj6snc83gn3jza/sc/mda-iidj6snc83gn3jza.mp4?auth_key=15633'
+                              '33305-0-0-20ad1eaa6cd1846f6ef9f56f9b2d7f45&bcevod_channel=searchbox_feed&pd=bjh&abtest=a'
+                              'll')
+
     main()
