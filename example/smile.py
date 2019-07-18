@@ -139,19 +139,23 @@ def detector_smile():
 
                 # Frame the corners of the mouth and label the smiling face.
                 # for (x2, y2, w2, h2) in smile:
-                #     cv2.rectangle(roi_color, (x2, y2), (x2 + w2, y2 + h2), (255, 0, 0), 2)
-                #     cv2.putText(img, 'Smile', (x, y - 7), 3,1.2, (0, 255, 0), 2, cv2.LINE_AA)
+                #     cv2.rectangle(roi_color, (x2, y2), (x2 + w2, y2 + h2),
+                #                  (255, 0, 0), 2)
+                #     cv2.putText(img, 'Smile', (x, y - 7), 3,1.2, (0, 255, 0),
+                #                 2, cv2.LINE_AA)
 
                 if smile is not None:
                     for i in smile:
                         # Gets the height that identifies the smiley face box.
                         smile_degree_max = i[3]
                         if smile_degree_max > smile_degree_min:
-                            cv2.imwrite(args.output_dir + '/' + args.images_dir + '_smile.png', img)
+                            cv2.imwrite(args.output_dir + '/' +
+                                        args.images_dir + '_smile.png', img)
                             smile_degree_min = smile_degree_max
                             flag = False
     if flag:
-        cv2.imwrite(args.output_dir + '/' + args.images_dir + '_smile.png', alternative_smile)
+        cv2.imwrite(args.output_dir + '/' + args.images_dir +
+                    '_smile.png', alternative_smile)
         return args.output_dir + '/' + args.images_dir + '_smile.png'
 
     return args.output_dir + '/' + args.images_dir + '_smile.png'
@@ -177,21 +181,31 @@ def main():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser('Extract mp4 key frame and extract smile face feature!')
+    parser = argparse.ArgumentParser(
+        'Extract mp4 key frame and extract smile face feature!')
 
-    # parser.add_argument('--video_path', required=False, type=str, default='./video1.mp4',
-    #                     help='The default file for testing is demo1.mp4 video, '
-    #                          'which will require the user to specify the file in the actual run.')
-    parser.add_argument('--images_dir', required=False, type=str, default='./video',
-                        help='The demo1 folder is where the images are saved by default when tested,'
-                             'which in practice requires the user to specify the save directory.')
-    parser.add_argument('--output_dir', required=False, type=str, default='./smile',
-                        help='Save the smiley path, non-final run path, need to be defined')
+    # parser.add_argument('--video_path', required=False, type=str,
+    #                     default='./video1.mp4',
+    #                     help='The default file for testing is demo1.mp4
+    #                           video, which will require the user to specify
+    #                           the file in the actual run.')
+    parser.add_argument('--images_dir', required=False, type=str,
+                        default='./video',
+                        help='The demo1 folder is where the images are saved'
+                             'by default when tested,'
+                             'which in practice requires the user to specify '
+                             'the save directory.')
+    parser.add_argument('--output_dir', required=False, type=str,
+                        default='./smile',
+                        help='Save the smiley path, non-final run path, need '
+                             'to be defined')
 
     args = parser.parse_args()
     # download url file
-    video_path = download_url('https://vd3.bdstatic.com/mda-iidj6snc83gn3jza/sc/mda-iidj6snc83gn3jza.mp4?auth_key=15633'
-                              '33305-0-0-20ad1eaa6cd1846f6ef9f56f9b2d7f45&bcevod_channel=searchbox_feed&pd=bjh&abtest=a'
+    video_path = download_url('https://vd3.bdstatic.com/mda-iidj6snc83gn3jza/'
+                              'sc/mda-iidj6snc83gn3jza.mp4?auth_key=15633'
+                              '33305-0-0-20ad1eaa6cd1846f6ef9f56f9b2d7f45&'
+                              'bcevod_channel=searchbox_feed&pd=bjh&abtest=a'
                               'll')
 
     main()
