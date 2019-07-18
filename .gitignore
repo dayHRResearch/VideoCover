@@ -133,3 +133,5 @@ dmypy.json
 
 # cmake file
 source/CMakeFiles
+source/cmake_install.cmake
+source/CMakeCache.txt
