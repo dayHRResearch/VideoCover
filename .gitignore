@@ -129,3 +129,4 @@ dmypy.json
 # test file
 *.png
 *.mp4
+.DS_Store
