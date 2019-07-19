@@ -12,9 +12,7 @@
 using namespace std;
 using namespace cv;
 
-CascadeClassifier& loadCascade() {
-  CascadeClassifier faceCascade, smileCascade;
-
+string cascadeName() {
   string faceCascadeName = samples::findFile("../data/face_improved.xml");
   string smileCascadeName = samples::findFile("../data/smile.xml");
 
@@ -27,7 +25,7 @@ CascadeClassifier& loadCascade() {
   //   perror("ERROR: Could not load smile cascade!\n");
   //   return -1;
   // }
-  return faceCascade, smileCascade;
+  return faceCascadeName, smileCascadeName;
 }
 
 #endif  // CASCADE_H
