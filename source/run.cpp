@@ -5,6 +5,7 @@
 
 #include "./utils/cascade.h"
 #include "./utils/dir.h"
+#include "./utils/process.h"
 
 using namespace std;
 using namespace cv;
@@ -28,17 +29,39 @@ int checkDirExists();
 int cleanDir();
 
 // this func has `./utils/cascade.h`
-CascadeClassifier& cascade();
+string cascadeName();
+
+// this func has `./utils/process.h`
+int video_to_image();
 
 void detectAndDraw(Mat& img, CascadeClassifier& cascade,
                    CascadeClassifier& nestedCascade, double scale,
                    bool tryflip);
+
+string faceCascadeName;
+string smileCascadeName;
 
 int main(int argc, const char** argv) {
   VideoCapture capture;
   Mat frame, image;
 
   CascadeClassifier faceCascade, smileCascade;
+
+  if (checkDirExists()) {
+    perror("War: create dir error!\nreturn code -1.\n");
+    return -1;
+  }
+
+  faceCascadeName, smileCascadeName = cascadeName();
+
+  if (video_to_image()) {
+    perror("War: video file conversion error!\nreturn code -1\n");
+    return -1;
+  }
+  if (cleanDir() == -1) {
+    perror("War: folder creation was unsuccessful!\nreturn code -1\n");
+    return -1;
+  }
 
   // // help();
 
@@ -108,9 +131,7 @@ int main(int argc, const char** argv) {
   //   help();
   //   return -1;
   // }
-  checkDirExists();
-  cleanDir();
-  faceCascade, smileCascade = loadCascade();
+
   return 0;
 }
 
