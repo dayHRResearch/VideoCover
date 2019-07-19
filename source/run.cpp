@@ -53,6 +53,7 @@ int main(int argc, const char** argv) {
   // Read the image, convert it into gray image, and then equalize the
   // histogram.
   string imageName = "./smile.png";
+  string smileName = "./hahah.png";
   Mat img = imread(imageName);
   if (img.empty()) {
     printf("No input images.\n");
@@ -65,11 +66,17 @@ int main(int argc, const char** argv) {
   vector<Rect> smiles = detectSmile(image_gray);
 
   if (!smiles.empty()) {
-    for (size_t i = 0; i < smiles.size(); i++)
-      Mat smile = image_gray(smiles[i]);
-    printf("Smile!\n");
-  } else
-    printf("No smile.");
+    imwrite(smileName, img);
+    return 0;
+  } else {
+    printf("No smile.\n");
+    return -1;
+  }
+
+  if (cleanDir()) {
+    perror("Warr: delete dir success!\nreturn code -1\n");
+    return -1;
+  }
 
   return 0;
 }
