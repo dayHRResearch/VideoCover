@@ -1,38 +1,44 @@
-#include <fstream>
 #include <iostream>
 #include "opencv4/opencv2/highgui.hpp"
 #include "opencv4/opencv2/imgproc.hpp"
 #include "opencv4/opencv2/objdetect.hpp"
+
+#include "./utils/cascade.h"
+#include "./utils/dir.h"
 
 using namespace std;
 using namespace cv;
 
 static void help() {
   printf(
-         "\nThis program demonstrates the smile detector.Contains two functions:\n"
-         "1.Converting Video Files to Pictures.\n"
-         "2.Extract the smiling pictures from the pictures.\n"
-         "Usage:\n"
-         "./smile [--url=<the URL of the incoming video>]\n"
-         "Example:\n"
-         "./smile https://www.google.com\n"
-         "\tUsing OpenCV version %s", CV_VERSION);
+      "\nThis program demonstrates the smile detector.Contains two functions:\n"
+      "1.Converting Video Files to Pictures.\n"
+      "2.Extract the smiling pictures from the pictures.\n"
+      "Usage:\n"
+      "./smile [--url=<the URL of the incoming video>]\n"
+      "Example:\n"
+      "./smile 'https://www.google.com' \n"
+      "\tUsing OpenCV version %s",
+      CV_VERSION);
   printf("\n");
 }
 
-void checkDirExists(fstream _dir) {}
+// this func have `./utils/dir.h`.
+int checkDirExists();
+int cleanDir();
+
+// this func has `./utils/cascade.h`
+CascadeClassifier& cascade();
+
 void detectAndDraw(Mat& img, CascadeClassifier& cascade,
                    CascadeClassifier& nestedCascade, double scale,
                    bool tryflip);
 
-string cascadeName;
-string nestedCascadeName;
-
 int main(int argc, const char** argv) {
-  // VideoCapture capture;
-  // Mat frame, image;
-  // string inputName;
-  // bool tryflip;
+  VideoCapture capture;
+  Mat frame, image;
+
+  CascadeClassifier faceCascade, smileCascade;
 
   // // help();
 
@@ -68,9 +74,11 @@ int main(int argc, const char** argv) {
   //   help();
   //   return -1;
   // }
-  // if (inputName.empty() || (isdigit(inputName[0]) && inputName.size() == 1)) {
+  // if (inputName.empty() || (isdigit(inputName[0]) && inputName.size() == 1))
+  // {
   //   int c = inputName.empty() ? 0 : inputName[0] - '0';
-  //   if (!capture.open(c)) printf("Capture from camera #%d didn't work.\n", c);
+  //   if (!capture.open(c)) printf("Capture from camera #%d didn't work.\n",
+  //   c);
   // } else if (inputName.size()) {
   //   inputName = samples::findFileOrKeep(inputName);
   //   if (!capture.open(inputName))
@@ -80,7 +88,8 @@ int main(int argc, const char** argv) {
   // if (capture.isOpened()) {
   //   cout << "Video capturing has been started ..." << endl;
   //   cout << endl
-  //        << "NOTE: Smile intensity will only be valid after a first smile has "
+  //        << "NOTE: Smile intensity will only be valid after a first smile has
+  //        "
   //           "been detected"
   //        << endl;
 
@@ -100,14 +109,10 @@ int main(int argc, const char** argv) {
   //   return -1;
   // }
   checkDirExists();
+  cleanDir();
+  faceCascade, smileCascade = loadCascade();
   return 0;
 }
-
-// Create a directory if the file directory does not exist.
-void checkDirExists(fstream _dir) { 
-  _dir.open("./images/", ios::in);
-  if (!_dir) printf("File not exists.")
-  else printf("File exists")
 
 void detectAndDraw(Mat& img, CascadeClassifier& cascade,
                    CascadeClassifier& nestedCascade, double scale,
@@ -188,7 +193,8 @@ void detectAndDraw(Mat& img, CascadeClassifier& cascade,
     if (min_neighbors == -1) min_neighbors = smile_neighbors;
     max_neighbors = MAX(max_neighbors, smile_neighbors);
 
-    // Draw rectangle on the left side of the image reflecting smile intensity
+    // Draw rectangle on the left side of the image reflecting smile
+    // intensity
     float intensityZeroOne = ((float)smile_neighbors - min_neighbors) /
                              (max_neighbors - min_neighbors + 1);
     int rect_height = cvRound((float)img.rows * intensityZeroOne);
