@@ -25,8 +25,6 @@ def check_exists():
     # Create a directory if the file directory does not exist.
     if not os.path.exists(images_dir):
         os.makedirs(images_dir)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
 
 
 def download_url(video_url):
@@ -148,16 +146,11 @@ def detector_smile():
                         # Gets the height that identifies the smiley face box.
                         smile_degree_max = i[3]
                         if smile_degree_max > smile_degree_min:
-                            cv2.imwrite(output_dir + '/' +
-                                        images_dir + '_smile.png', img)
+                            cv2.imwrite('smile.png', img)
                             smile_degree_min = smile_degree_max
                             flag = False
     if flag:
-        cv2.imwrite(output_dir + '/' + images_dir +
-                    '_smile.png', alternative_smile)
-        return output_dir + '/' + images_dir + '_smile.png'
-
-    return output_dir + '/' + images_dir + '_smile.png'
+        cv2.imwrite('smile.png', alternative_smile)
 
 
 def remove_temp_file():
@@ -184,6 +177,6 @@ if __name__ == '__main__':
     # download url file
     video_path = download_url(url)
     images_dir = './video'
-    output_dir = './smile'
+    # output_dir = './smile'
 
     main()
