@@ -64,7 +64,7 @@ def video_to_image():
         if not success:
             break
 
-        if i % 20 == 0:
+        if i % 12 == 0:
             cv2.imwrite(args.images_dir + '/' + str(i) + '.png', image)
 
     camera.release()
