@@ -22,6 +22,8 @@ static void help() {
   cout << endl;
   cout << "\tUsing OpenCV version 4.0.1";
   cout << endl;
+  cout << endl;
+  cout << endl;
 }
 
 // this func have `./utils/download.cc`
@@ -44,11 +46,12 @@ int main(int argc, const char *argv[]) {
   }
   const char *video_name = "video.mp4";
   const char *dir_name = "./video";
+  string smile_name = "smile.png";
   if (download(argv[1], video_name) == -1) {
     perror("Warr: download video error!\nreturn code -1.\n");
     return -1;
   }
-  printf("Download done!\n");
+  printf("Download video done!\n");
 
   if (__mkdir__(dir_name) == -1) {
     perror("Warr: create dir error!\nreturn code -1.\n");
@@ -60,33 +63,30 @@ int main(int argc, const char *argv[]) {
     perror("Warr: video file conversion error!\nreturn code -1\n");
     return -1;
   }
+
+  // Read the image, convert it into gray image, and then equalize the
+  // histogram.
+  for (int i = 1; i < 9999; i++) {
+    string img_name = dir_name + forward_slash + to_string(i) + suffix_png;
+
+    Mat img = imread(img_name);
+    if (img.empty()) break;
+
+    Mat image_gray;
+    cvtColor(img, image_gray, COLOR_BGR2GRAY);
+    equalizeHist(image_gray, image_gray);
+
+    vector<Rect> smiles = detectSmile(image_gray);
+
+    if (!smiles.empty()) imwrite(smile_name, img);
+  }
+  printf("Smile detector done!\n");
+
   if (__rmdir__(dir_name) == -1) {
     perror("Warr: delete temp dir error!\nreturn code -1\n");
     return -1;
   }
   printf("Delete dir done!\n");
-
-  // Read the image, convert it into gray image, and then equalize the
-  // histogram.
-  const char *img_name = "./smile.png";
-  const char *smile_name = "hh.png";
-  Mat img = imread(img_name);
-  if (img.empty()) {
-    printf("No input images.\n");
-    return -1;
-  }
-  Mat image_gray;
-  cvtColor(img, image_gray, COLOR_BGR2GRAY);
-  equalizeHist(image_gray, image_gray);
-
-  vector<Rect> smiles = detectSmile(image_gray);
-
-  if (!smiles.empty()) imwrite(smile_name, img);
-
-  if (__rmdir__(dir_name)) {
-    perror("Warr: delete dir success!\nreturn code -1\n");
-    return -1;
-  }
 
   return 0;
 }
