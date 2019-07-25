@@ -6,7 +6,9 @@ using namespace cv;
 vector<Rect> detectFaces(Mat gray) {
   CascadeClassifier facesCascade;
   vector<Rect> faces;
-  facesCascade.load("../data/face.xml");
+  facesCascade.load(
+      "/usr/local/share/opencv4/haarcascades/"
+      "haarcascade_frontalface_default.xml");
   facesCascade.detectMultiScale(gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE,
                                 Size(30, 30));
   return faces;
@@ -15,7 +17,8 @@ vector<Rect> detectFaces(Mat gray) {
 vector<Rect> detectSmile(Mat faces) {
   CascadeClassifier smileCascade;
   vector<Rect> smiles;
-  smileCascade.load("../data/smile.xml");
+  smileCascade.load(
+      "/usr/local/share/opencv4/haarcascades/haarcascade_smile.xml");
   smileCascade.detectMultiScale(faces, smiles, 1.1, 2, 0 | CASCADE_SCALE_IMAGE,
                                 Size(30, 30));
   return smiles;
@@ -26,7 +29,8 @@ void detectDrawEyes(Mat img, Mat img_gray) {
   for (size_t i = 0; i < faces.size(); i++) {
     Mat faceROI = img_gray(faces[i]);
     CascadeClassifier eyes_cascade;
-    eyes_cascade.load("../data/eye.xml");
+    eyes_cascade.load(
+        "/usr/local/share/opencv4/haarcascades/haarcascade_eye.xml");
     vector<Rect> eyes;
     eyes_cascade.detectMultiScale(faceROI, eyes, 1.1, 2,
                                   0 | CASCADE_SCALE_IMAGE, Size(30, 30));

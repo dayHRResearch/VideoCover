@@ -1,3 +1,5 @@
+#include "./include/log.h"
+
 #include "./utils/detect.cc"
 #include "./utils/dir.cc"
 #include "./utils/download.cc"
@@ -19,6 +21,7 @@ static void help() {
           "4673d4ae-7078-42c1-affb-494b4ad0e687.mp4?resId="
           "254486990bfa2cd7aa860229db639341_1919639027_0&sign=i9VRqSZZJDUI%"
           "2B3hka7EpMg12silSgknLl2iTUoyqKT8%3D";
+  cout << endl;
   cout << endl;
   cout << "\tUsing OpenCV version 4.0.1";
   cout << endl;
@@ -48,21 +51,25 @@ int main(int argc, const char *argv[]) {
   const char *dir_name = "./video";
   string smile_name = "smile.png";
   if (download(argv[1], video_name) == -1) {
-    perror("Warr: download video error!\nreturn code -1.\n");
+    lprintf(MSG_ERROR, "Download video error.\n");
+    lprintf(MSG_INFO, "Return code -1.\n");
     return -1;
   }
-  printf("Download video done!\n");
+  lprintf(MSG_INFO, "Download video done!\n");
 
   if (__mkdir__(dir_name) == -1) {
-    perror("Warr: create dir error!\nreturn code -1.\n");
+    lprintf(MSG_ERROR, "Create dir error!\n");
+    lprintf(MSG_INFO, "Return code -1.\n");
     return -1;
   }
-  printf("Create dir done!\n");
+  lprintf(MSG_INFO, "Create dir done!\n");
 
   if (video_to_image(video_name, dir_name) == -1) {
-    perror("Warr: video file conversion error!\nreturn code -1\n");
+    lprintf(MSG_ERROR, "Video file conversion error.\n");
+    lprintf(MSG_INFO, "Return code -1.\n");
     return -1;
   }
+  lprintf(MSG_INFO, "Video convert image done!\n");
 
   // Read the image, convert it into gray image, and then equalize the
   // histogram.
@@ -83,10 +90,11 @@ int main(int argc, const char *argv[]) {
   printf("Smile detector done!\n");
 
   if (__rmdir__(dir_name) == -1) {
-    perror("Warr: delete temp dir error!\nreturn code -1\n");
+    lprintf(MSG_ERROR, "Delete temp dir error.\n");
+    lprintf(MSG_INFO, "Return code -1.\n");
     return -1;
   }
-  printf("Delete dir done!\n");
+  lprintf(MSG_INFO, "Delete temp dir successful!.\n");
 
   return 0;
 }
