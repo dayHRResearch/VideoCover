@@ -14,15 +14,10 @@ include_directories(/usr/local/include/opencv4/opencv2)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 link_directories(${CMAKE_CURRENT_LIST_DIR}/lib)
 
-add_executable(download utils/download.cc)
+add_executable(videocover run.cc)
 
-set(CMAKE_CXX_COMPILE_FEATURES      "g++" )        
-set(CMAKE_CXX_FLAGS         "-std=c++17")         
-
-set(CMAKE_CXX_FLAGS_DEBUG   "-O0" )             
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG " )  
-
-target_link_libraries(download ${TORCH_LIBRARIES} ${OpenCV_LIBS}) 
+target_link_libraries(videocover ${TORCH_LIBRARIES} ${OpenCV_LIBS}) 
+set_property(TARGET videocover PROPERTY CXX_STANDARD 17)
 
 
  
