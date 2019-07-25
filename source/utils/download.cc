@@ -95,7 +95,7 @@ int parser_URL(char *url, http_t *info) {
   start = end;
   strncpy(info->url, start, URI_MAX_LEN - 1);
 
-  lprintf(MSG_INFO, "parse url ok\nhost:%s, port:%d, uri:%s\n", info->host_name,
+  lprintf(MSG_INFO, "Parse url ok\nhost:%s, port:%d, url:%s\n", info->host_name,
           info->port, info->url);
   return 0;
 }
@@ -530,38 +530,31 @@ int download(const char *url, const char *save_path) {
     clean_up(info);
     return -1;
   }
-
-  switch (info->status_code) {
-    case HTTP_OK:
-      // receive data
-      lprintf(MSG_DEBUG, "recv data now\n");
-      info->start_recv_time = time(0);
-      if (-1 == recv_response(info)) {
-        clean_up(info);
-        return -1;
-      }
-
-      info->end_recv_time = time(0);
-      lprintf(MSG_INFO, "recv %d bytes\n", info->recv_data_len);
-      lprintf(MSG_INFO, "Average download speed: %.2fKB/s\n",
-              calc_download_speed(info) / 1000);
-      break;
-    case HTTP_REDIRECT:
-      lprintf(MSG_INFO, "redirect: %s\n", info->location);
-      strncpy(tmp, info->location, URI_MAX_LEN - 1);
-      clean_up(info);
-      return download(tmp, save_path);
-
-    case HTTP_NOT_FOUND:
-      lprintf(MSG_ERROR, "Page not found\n");
+  if (info->status_code == HTTP_OK) {
+    lprintf(MSG_DEBUG, "recv data now\n");
+    info->start_recv_time = time(0);
+    if (-1 == recv_response(info)) {
       clean_up(info);
       return -1;
-      break;
+    }
 
-    default:
-      lprintf(MSG_INFO, "Not supported http code %d\n", info->status_code);
-      clean_up(info);
-      return -1;
+    info->end_recv_time = time(0);
+    lprintf(MSG_INFO, "recv %d bytes\n", info->recv_data_len);
+    lprintf(MSG_INFO, "Average download speed: %.2fKB/s\n",
+            calc_download_speed(info) / 1000);
+  } else if (info->status_code == HTTP_REDIRECT) {
+    lprintf(MSG_INFO, "redirect: %s\n", info->location);
+    strncpy(tmp, info->location, URI_MAX_LEN - 1);
+    clean_up(info);
+    return download(tmp, save_path);
+  } else if (info->status_code == HTTP_NOT_FOUND) {
+    lprintf(MSG_ERROR, "Page not found\n");
+    clean_up(info);
+    return -1;
+  } else {
+    lprintf(MSG_INFO, "Not supported http code %d\n", info->status_code);
+    clean_up(info);
+    return -1;
   }
 
   clean_up(info);

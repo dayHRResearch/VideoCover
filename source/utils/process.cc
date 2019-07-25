@@ -1,11 +1,12 @@
 #include "../include/process.h"
 
 using namespace cv;
+using namespace std;
 
-const char *forward_slash = "/";
-const char *backward_slash = "\\";
-const char *suffix_png = ".png";
-const char *suffix_jpg = ".jpg";
+const string forward_slash = "/";
+const string backward_slash = "\\";
+const string suffix_png = ".png";
+const string suffix_jpg = ".jpg";
 
 /**
  * Divide video file into several consecutive frames.
@@ -18,43 +19,25 @@ const char *suffix_jpg = ".jpg";
  * @ last modifly time: 2019.7.25
  */
 int video_to_image(const char *video_name, const char *dir_name) {
-  VideoCapture capture;
-  Mat frame;
+  int frame_cnt = 0;
+  int num = 0;
+  Mat img;
 
-  int fps_beak = 0;
+  VideoCapture cap(video_name);
+  if (!cap.isOpened()) perror("Open video file failed!\n");
 
-  frame = capture.open(video_name);
-  if (!capture.isOpened()) return -1;
+  bool flag = true;
+  while (flag) {
+    bool success = cap.read(img);
+    if (img.empty()) flag = false;
 
-  // get all frame.
-  long total_video_frame = capture.get(CAP_PROP_FRAME_COUNT);
-  // set start frame.
-  long start = 1;
-  // set end frame.
-  long current_frame = start;
-  // set skip frame value.
-  unsigned fpsBreak = 20;
-
-  // Define a variable to control the end of the read video loop.
-  bool flag = false;
-  while (!flag) {
-    // read next frame.
-    if (!capture.read(frame)) {
-      flag = true;
-      return -1;
-    };
-    // Variables that control the specified frame.
-    // Modify the value of the skip frame
-    if (current_frame % fpsBreak == 0) {
-      char *dir = strcat((char *)dir_name, forward_slash);
-      char *file_name = strcat((char *)current_frame, suffix_png);
-      char *img_path = strcat(dir, file_name);
-      imwrite(img_path, frame);
+    if (frame_cnt % 20 == 0) {
+      ++num;
+      string img_path = dir_name + forward_slash + to_string(num) + suffix_png;
+      imwrite(img_path, img);
     }
-    current_frame++;
-
-    if (current_frame > total_video_frame) flag = true;
+    ++frame_cnt;
   }
-  capture.release();
+  cap.release();
   return 0;
 }

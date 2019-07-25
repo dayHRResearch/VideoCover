@@ -7,24 +7,29 @@ using namespace std;
 using namespace cv;
 
 static void help() {
-  printf(
-      "\nThis program demonstrates the smile detector.Contains two functions:\n"
-      "1.Converting Video Files to Pictures.\n"
-      "2.Extract the smiling pictures from the pictures.\n"
-      "Usage:\n"
-      "./smile [--url=<the URL of the incoming video>]\n"
-      "Example:\n"
-      "./smile 'https://www.google.com' \n"
-      "\tUsing OpenCV version 4.0.1");
-  printf("\n");
+  cout << "\nThis program demonstrates the smile detector.Contains two "
+          "functions:\n"
+          "1.Converting Video Files to Pictures.\n"
+          "2.Extract the smiling pictures from the pictures.\n"
+          "Usage:\n"
+          "./smile [--url=<the URL of the incoming video>]\n"
+          "Example:\n"
+          "./videocover "
+          "http://vodm2lzexwq.vod.126.net/vodm2lzexwq/"
+          "4673d4ae-7078-42c1-affb-494b4ad0e687.mp4?resId="
+          "254486990bfa2cd7aa860229db639341_1919639027_0&sign=i9VRqSZZJDUI%"
+          "2B3hka7EpMg12silSgknLl2iTUoyqKT8%3D";
+  cout << endl;
+  cout << "\tUsing OpenCV version 4.0.1";
+  cout << endl;
 }
 
 // this func have `./utils/download.cc`
 int download(const char *url, const char *save_path);
 
 // this func have `./utils/dir.h`.
-int check_dir_exists(const char *dir_name);
-int clean_dir(const char *dir_name);
+int __mkdir__(const char *dir_name);
+int __rmdir__(const char *dir);
 
 // this func has `./utils/process.h`
 int video_to_image(const char *video_name, const char *dir_name);
@@ -33,26 +38,34 @@ int video_to_image(const char *video_name, const char *dir_name);
 vector<Rect> detectSmile(Mat faces);
 
 int main(int argc, const char *argv[]) {
-  const char *url =
-      "http://vodm2lzexwq.vod.126.net/vodm2lzexwq/"
-      "4673d4ae-7078-42c1-affb-494b4ad0e687.mp4?resId="
-      "254486990bfa2cd7aa860229db639341_1919639027_0&sign=i9VRqSZZJDUI%"
-      "2B3hka7EpMg12silSgknLl2iTUoyqKT8%3D";
+  if (argc < 2) {
+    help();
+    return 0;
+  }
   const char *video_name = "video.mp4";
   const char *dir_name = "./video";
-  download(url, video_name);
+  if (download(argv[1], video_name) == -1) {
+    perror("Warr: download video error!\nreturn code -1.\n");
+    return -1;
+  }
+  printf("Download done!\n");
 
-  if (!check_dir_exists(dir_name)) {
+  if (__mkdir__(dir_name) == -1) {
     perror("Warr: create dir error!\nreturn code -1.\n");
     return -1;
   }
+  printf("Create dir done!\n");
 
-  if (!video_to_image(video_name, dir_name)) {
+  if (video_to_image(video_name, dir_name) == -1) {
     perror("Warr: video file conversion error!\nreturn code -1\n");
     return -1;
   }
+  if (__rmdir__(dir_name) == -1) {
+    perror("Warr: delete temp dir error!\nreturn code -1\n");
+    return -1;
+  }
+  printf("Delete dir done!\n");
 
-  help();
   // Read the image, convert it into gray image, and then equalize the
   // histogram.
   const char *img_name = "./smile.png";
@@ -68,15 +81,9 @@ int main(int argc, const char *argv[]) {
 
   vector<Rect> smiles = detectSmile(image_gray);
 
-  if (!smiles.empty()) {
-    imwrite(smile_name, img);
-    return 0;
-  } else {
-    printf("No smile.\n");
-    return -1;
-  }
+  if (!smiles.empty()) imwrite(smile_name, img);
 
-  if (clean_dir(dir_name)) {
+  if (__rmdir__(dir_name)) {
     perror("Warr: delete dir success!\nreturn code -1\n");
     return -1;
   }
