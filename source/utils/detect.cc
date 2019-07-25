@@ -1,17 +1,4 @@
-#ifndef UTILS_DETECT_H
-#define UTILS_DETECT_H
-#include "opencv4/opencv2/core/core.hpp"
-#include "opencv4/opencv2/opencv.hpp"
-
-#ifndef IO
-#define IO
-#include <iostream>
-#endif  // IO
-
-#ifndef VECTOR
-#define VECTOR
-#include <vector>
-#endif  // VECTOR
+#include "../include/detech.h"
 
 using namespace std;
 using namespace cv;
@@ -75,5 +62,3 @@ void drawFaces(Mat img, vector<Rect> faces) {
   }
   imshow("draw faces", img);
 }
-
-#endif  // UTILS_DETECT_H

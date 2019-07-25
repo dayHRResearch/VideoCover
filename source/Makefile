@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named download
+# Target rules for targets named videocover
 
 # Build rule for target.
-download: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 download
-.PHONY : download
+videocover: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 videocover
+.PHONY : videocover
 
 # fast build rule for target.
-download/fast:
-	$(MAKE) -f CMakeFiles/download.dir/build.make CMakeFiles/download.dir/build
-.PHONY : download/fast
+videocover/fast:
+	$(MAKE) -f CMakeFiles/videocover.dir/build.make CMakeFiles/videocover.dir/build
+.PHONY : videocover/fast
 
-utils/download.o: utils/download.cc.o
+run.o: run.cc.o
 
-.PHONY : utils/download.o
+.PHONY : run.o
 
 # target to build an object file
-utils/download.cc.o:
-	$(MAKE) -f CMakeFiles/download.dir/build.make CMakeFiles/download.dir/utils/download.cc.o
-.PHONY : utils/download.cc.o
+run.cc.o:
+	$(MAKE) -f CMakeFiles/videocover.dir/build.make CMakeFiles/videocover.dir/run.cc.o
+.PHONY : run.cc.o
 
-utils/download.i: utils/download.cc.i
+run.i: run.cc.i
 
-.PHONY : utils/download.i
+.PHONY : run.i
 
 # target to preprocess a source file
-utils/download.cc.i:
-	$(MAKE) -f CMakeFiles/download.dir/build.make CMakeFiles/download.dir/utils/download.cc.i
-.PHONY : utils/download.cc.i
+run.cc.i:
+	$(MAKE) -f CMakeFiles/videocover.dir/build.make CMakeFiles/videocover.dir/run.cc.i
+.PHONY : run.cc.i
 
-utils/download.s: utils/download.cc.s
+run.s: run.cc.s
 
-.PHONY : utils/download.s
+.PHONY : run.s
 
 # target to generate assembly for a file
-utils/download.cc.s:
-	$(MAKE) -f CMakeFiles/download.dir/build.make CMakeFiles/download.dir/utils/download.cc.s
-.PHONY : utils/download.cc.s
+run.cc.s:
+	$(MAKE) -f CMakeFiles/videocover.dir/build.make CMakeFiles/videocover.dir/run.cc.s
+.PHONY : run.cc.s
 
 # Help Target
 help:
@@ -158,10 +158,10 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... download"
-	@echo "... utils/download.o"
-	@echo "... utils/download.i"
-	@echo "... utils/download.s"
+	@echo "... videocover"
+	@echo "... run.o"
+	@echo "... run.i"
+	@echo "... run.s"
 .PHONY : help
 
 

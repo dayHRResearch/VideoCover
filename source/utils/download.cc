@@ -13,8 +13,8 @@
  * limitations under the License.
  * ==============================================================================
  */
-
 #include "../include/download.h"
+
 /**
  * print error.
  * example: "[MSG_ERROR][parser_URL(101)]:url invaild"
@@ -77,7 +77,7 @@ int parser_URL(char *url, http_t *info) {
   // port default 80.
   info->port = 80;
 
-  len = MIN(end - start, HOST_NAME_LEN - 1);
+  len = _MIN(end - start, HOST_NAME_LEN - 1);
   strncpy(info->host_name, start, len);
   info->host_name[len] = '\0';
 
@@ -86,7 +86,7 @@ int parser_URL(char *url, http_t *info) {
     if (info->port <= 0 || info->port >= 65535) return -1;
 
     // Assignment before overwriting
-    len = MIN(tmp - start, HOST_NAME_LEN - 1);
+    len = _MIN(tmp - start, HOST_NAME_LEN - 1);
     strncpy(info->host_name, start, len);
     info->host_name[len] = '\0';
   }
@@ -228,7 +228,7 @@ int send_request(http_t *info) {
 
   memset(info->buffer, 0x0, RECV_BUF);
   snprintf(info->buffer, RECV_BUF - 1,
-           "GET %s HTTP/2.0\r\n"
+           "GET %s HTTP/1.1\r\n"
            "Accept: */*\r\n"
            "User-Agent: Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)\r\n"
            "Host: %s\r\n"
@@ -345,7 +345,7 @@ int read_data(http_t *info, int len) {
   int rtn_len = 0;
 
   while (total_len) {
-    read_len = MIN(total_len, RECV_BUF);
+    read_len = _MIN(total_len, RECV_BUF);
     // lprintf(MSG_DEBUG, "need read len: %d\n", read_len);
     rtn_len = fread(info->buffer, sizeof(char), read_len, info->in);
     if (rtn_len < read_len) {
@@ -483,7 +483,7 @@ void clean_up(http_t *info) {
  * @ author: Changyu Liu
  * @ last modifly time: 2019.7.25
  */
-int http_download(char *url, char *save_path) {
+int download(const char *url, const char *save_path) {
   http_t *info = NULL;
   char tmp[URI_MAX_LEN] = {0};
 
@@ -497,10 +497,10 @@ int http_download(char *url, char *save_path) {
   }
   memset(info, 0x0, sizeof(http_t));
   info->sock = -1;
-  info->save_path = save_path;
+  info->save_path = (char *)save_path;
 
   // resolve url
-  if (-1 == parser_URL(url, info)) {
+  if (-1 == parser_URL((char *)url, info)) {
     clean_up(info);
     return -1;
   }
@@ -550,7 +550,7 @@ int http_download(char *url, char *save_path) {
       lprintf(MSG_INFO, "redirect: %s\n", info->location);
       strncpy(tmp, info->location, URI_MAX_LEN - 1);
       clean_up(info);
-      return http_download(tmp, save_path);
+      return download(tmp, save_path);
 
     case HTTP_NOT_FOUND:
       lprintf(MSG_ERROR, "Page not found\n");
@@ -565,12 +565,5 @@ int http_download(char *url, char *save_path) {
   }
 
   clean_up(info);
-  return 0;
-}
-
-int main(int argc, char *argv[]) {
-  if (argc < 3) return -1;
-
-  http_download(argv[1], argv[2]);
   return 0;
 }
