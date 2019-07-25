@@ -1,4 +1,4 @@
-#include "./include/log.h"
+#include "../include/log.h"
 
 #include "./utils/detect.cc"
 #include "./utils/dir.cc"
@@ -55,21 +55,21 @@ int main(int argc, const char *argv[]) {
     lprintf(MSG_INFO, "Return code -1.\n");
     return -1;
   }
-  lprintf(MSG_INFO, "Download video done!\n");
+  lprintf(MSG_INFO, "Download video successful!\n");
 
   if (__mkdir__(dir_name) == -1) {
     lprintf(MSG_ERROR, "Create dir error!\n");
     lprintf(MSG_INFO, "Return code -1.\n");
     return -1;
   }
-  lprintf(MSG_INFO, "Create dir done!\n");
+  lprintf(MSG_INFO, "Create dir successful!\n");
 
   if (video_to_image(video_name, dir_name) == -1) {
-    lprintf(MSG_ERROR, "Video file conversion error.\n");
+    lprintf(MSG_ERROR, "Video file conversion error!\n");
     lprintf(MSG_INFO, "Return code -1.\n");
     return -1;
   }
-  lprintf(MSG_INFO, "Video convert image done!\n");
+  lprintf(MSG_INFO, "Video convert image successful!\n");
 
   // Read the image, convert it into gray image, and then equalize the
   // histogram.
@@ -87,14 +87,14 @@ int main(int argc, const char *argv[]) {
 
     if (!smiles.empty()) imwrite(smile_name, img);
   }
-  printf("Smile detector done!\n");
+  lprintf(MSG_INFO, "Smile detector successful!\n");
 
   if (__rmdir__(dir_name) == -1) {
     lprintf(MSG_ERROR, "Delete temp dir error.\n");
     lprintf(MSG_INFO, "Return code -1.\n");
     return -1;
   }
-  lprintf(MSG_INFO, "Delete temp dir successful!.\n");
+  lprintf(MSG_INFO, "Delete temp dir successful!\n");
 
   return 0;
 }

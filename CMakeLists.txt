@@ -14,7 +14,7 @@ include_directories(/usr/local/include/opencv4/opencv2)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 link_directories(${CMAKE_CURRENT_LIST_DIR}/lib)
 
-add_executable(videocover run.cc)
+add_executable(videocover source/run.cc)
 
 target_link_libraries(videocover ${TORCH_LIBRARIES} ${OpenCV_LIBS}) 
 set_property(TARGET videocover PROPERTY CXX_STANDARD 17)

@@ -1,4 +1,4 @@
-#include "../include/dir.h"
+#include "../../include/dir.h"
 
 // Create a directory if the file directory does not exist.
 int __mkdir__(const char *dir_name) {

@@ -13,8 +13,8 @@
  * limitations under the License.
  * ==============================================================================
  */
-#include "../include/download.h"
-#include "../include/log.h"
+#include "../../include/download.h"
+#include "../../include/log.h"
 
 /**
  * Ignore Case and case.

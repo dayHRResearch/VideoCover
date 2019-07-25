@@ -1,4 +1,4 @@
-#include "../include/detech.h"
+#include "../../include/detech.h"
 
 using namespace std;
 using namespace cv;
