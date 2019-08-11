@@ -67,24 +67,6 @@ def video_to_image():
     camera.release()
 
 
-def image_to_video():
-    """ Combine multiple consecutive images into a single video file.
-
-    Returns:
-        A visual video file.
-    """
-    fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-    video_writer = cv2.VideoWriter(video_path, fourcc, 25, (640, 362))
-
-    for i in range(0, 99999):
-        # check img exist
-        if os.path.exists(images_dir + str(i) + '.png'):
-            image = cv2.imread(video_path + str(i) + '.png')
-            video_writer.write(image)
-
-    video_writer.release()
-
-
 def detector_smile():
     """ Perform smiley face detection on the images under the key frame.
 
